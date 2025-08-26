@@ -24,6 +24,16 @@ kubectl get nodes
 Deploy the Load Balancer:
 
 ```bash
+for cluster_name in $(docker network list --format "{{ .Name}}" | grep k3d); do
+
+cidr_block=$(docker network inspect $cluster_name | jq '.[0].IPAM.Config[0].Subnet' | tr -d '"')
+cidr_base_addr=${cidr_block%???}
+ingress_first_addr=$(echo $cidr_base_addr | awk -F'.' '{print $1,$2,255,0}' OFS='.')
+ingress_last_addr=$(echo $cidr_base_addr | awk -F'.' '{print $1,$2,255,255}' OFS='.')
+ingress_range=$ingress_first_addr-$ingress_last_addr
+
+# switch context to current cluster
+kubectl config use-context $cluster_name
 
 # deploy metallb
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
