@@ -24,6 +24,7 @@ kubectl get nodes
 Deploy the Load Balancer:
 
 ```bash
+
 for cluster_name in $(docker network list --format "{{ .Name}}" | grep k3d); do
 
 cidr_block=$(docker network inspect $cluster_name | jq '.[0].IPAM.Config[0].Subnet' | tr -d '"')
