@@ -50,6 +50,7 @@ spec:
   addresses:
   - $ingress_range
 EOF
+done
 
 ```
 
